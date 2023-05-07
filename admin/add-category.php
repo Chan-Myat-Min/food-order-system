@@ -65,7 +65,7 @@
             if (isset($_POST['active'])) {
                 $active = $_POST['active'];
             } else {
-                $active = "No";
+                $active = "No There is no file";
             }
             //check whether the image is selected or not and set the value for image name accordingly
             //print_r($_FILES['image']);
