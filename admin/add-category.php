@@ -65,23 +65,45 @@
             if (isset($_POST['active'])) {
                 $active = $_POST['active'];
             } else {
-                $active = "No There is no file";
+                $active = "No";
             }
             //check whether the image is selected or not and set the value for image name accordingly
             //print_r($_FILES['image']);
 
             // die(); //break the code here
 
-            if (isset(S_FILES['image']['name'])) {
+            if (isset($_FILES['image']['name'])) {
                 //upload the image
                 //to upload image we need image name,source path and destination path
-                $name_name = $_FILES['image']['name'];
-                $source_path = $_FILES['image']['tmp_name'];
-                $destination_path = "../images/category/" . $image_name;
+                $image_name = $_FILES['image']['name'];
 
-                $upload = move_uploaded_file($source_path, $destination_path);
-                //Check whether the image is not 
-                //And if the image is not  uploaded then we will stop the process and redirect with error message
+                //Upload the Image only if image is selected
+                if ($image_name != "")
+                 {
+
+                    //Auto Rename our Image
+                    //GEt the extension of our image( img format aas jpg.png, etc) "specialfood1.jpg"
+                    $ext = end(explode('.', $image_name));
+
+                    //Rename the image
+                    $image_name = "Food_Category_" . rand(000, 999) . '.' . $ext; // e.g. Food_Category_834.jpg
+
+                    $source_path = $_FILES['image']['tmp_name'];
+                    $destination_path = "../images/category/" . $image_name;
+
+                    //Finally upload the image
+                    $upload = move_uploaded_file($source_path, $destination_path);
+
+                    //Check whether the image is not 
+                    //And if the image is not  uploaded then we will stop the process and redirect with error message
+                    if ($upload == false) {
+                        $_SESSION['upload'] = "<div class='error'>Failed to Upload Image</div>";
+                        header('location:' . SITEURL . 'admin/add-category.php');
+
+                        //STOp the Process
+                        die();
+                    }
+                }
             } else {
                 // Don't upload the image and set the image_name value as blank
                 $image_name = "";
@@ -90,9 +112,11 @@
             //2. Creste SQ Query to Insert Categoty in Database 
             $sql = "INSERT INTO tbl_category SET
         title= '$title',
+        image_name='$image_name',
         featured= '$featured',
         active= '$active'
         ";
+            echo $sql;
             // 3. Execute the Query the Save in Database
             $res = mysqli_query($conn, $sql) or die(mysqli_error($conn));
             //4. Check whether the query executed or not and data added or not

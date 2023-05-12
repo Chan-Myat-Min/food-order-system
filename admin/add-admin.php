@@ -11,6 +11,10 @@ include('partials/menu.php');
             echo $_SESSION['add']; // display session msg
             unset($_SESSION['add']); //Remove session msg
         }
+        if (isset($_SESSION['upload'])) {
+            echo $_SESSION['upload'];
+            unset($_SESSION['upload']);
+        }
         ?>
 
         <form action="" method="POST">
